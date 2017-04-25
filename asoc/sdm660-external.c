@@ -2096,6 +2096,9 @@ int msm_cs47l35_init(struct snd_soc_pcm_runtime *rtd)
 	if (ret)
 		pr_err("%s: Failed to set AFE config %d\n", __func__, ret);
 
+	snd_soc_dapm_force_enable_pin(dapm, "SYSCLK");
+	snd_soc_dapm_sync(dapm);
+
 	codec_reg_done = true;
 	return 0;
 }
