@@ -2,7 +2,6 @@
 /*
  * Copyright (c) 2015-2020, The Linux Foundation. All rights reserved.
  */
-
 #include <linux/input.h>
 #include <linux/of_gpio.h>
 #include <linux/module.h>
@@ -481,6 +480,7 @@ struct tdm_slot_cfg {
 	u32 num;
 };
 
+#ifdef CONFIG_SND_SOC_QCOM_TDM
 static struct tdm_slot_cfg tdm_slot[TDM_INTERFACE_MAX] = {
 	/* PRI TDM */
 	{32, 8},
@@ -1145,6 +1145,7 @@ end:
 	return ret;
 }
 EXPORT_SYMBOL(msm_tdm_snd_hw_params);
+#endif
 
 static int proxy_rx_ch_get(struct snd_kcontrol *kcontrol,
 			       struct snd_ctl_elem_value *ucontrol)
@@ -1166,6 +1167,7 @@ static int proxy_rx_ch_put(struct snd_kcontrol *kcontrol,
 	return 1;
 }
 
+#ifdef CONFIG_SND_SOC_QCOM_TDM
 static int tdm_get_sample_rate(int value)
 {
 	int sample_rate = 0;
@@ -1463,6 +1465,7 @@ static int tdm_get_format_val(int format)
 	}
 	return value;
 }
+#endif
 
 static int mi2s_get_format(int value)
 {
@@ -1512,6 +1515,7 @@ static int mi2s_get_format_value(int format)
 	return value;
 }
 
+#ifdef CONFIG_SND_SOC_QCOM_TDM
 static int tdm_rx_format_get(struct snd_kcontrol *kcontrol,
 			     struct snd_ctl_elem_value *ucontrol)
 {
@@ -1672,6 +1676,7 @@ static int tdm_tx_ch_put(struct snd_kcontrol *kcontrol,
 	}
 	return ret;
 }
+#endif
 
 static int tdm_get_slot_num_val(int slot_num)
 {
@@ -3092,6 +3097,7 @@ const struct snd_kcontrol_new msm_common_snd_controls[] = {
 	SOC_ENUM_EXT("Display Port RX SampleRate", ext_disp_rx_sample_rate,
 			ext_disp_rx_sample_rate_get,
 			ext_disp_rx_sample_rate_put),
+#ifdef CONFIG_SND_SOC_QCOM_TDM
 	SOC_ENUM_EXT("PRI_TDM_RX_0 SampleRate", tdm_rx_sample_rate,
 			tdm_rx_sample_rate_get,
 			tdm_rx_sample_rate_put),
@@ -3444,6 +3450,7 @@ const struct snd_kcontrol_new msm_common_snd_controls[] = {
 		tdm_tx_slot_mapping_get, tdm_tx_slot_mapping_put),
 	SOC_ENUM_EXT("MultiMedia5_RX QOS Vote", qos_vote, msm_qos_ctl_get,
 			msm_qos_ctl_put),
+#endif
 };
 
 /**

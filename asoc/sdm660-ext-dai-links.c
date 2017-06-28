@@ -62,11 +62,13 @@ static struct snd_soc_ops msm_aux_pcm_be_ops = {
 	.shutdown = msm_aux_pcm_snd_shutdown,
 };
 
+#ifdef CONFIG_SND_SOC_QCOM_TDM
 static struct snd_soc_ops msm_tdm_be_ops = {
 	.startup = msm_tdm_snd_startup,
 	.shutdown = msm_tdm_snd_shutdown,
 	.hw_params = msm_tdm_snd_hw_params,
 };
+#endif
 
 static int msm_wcn_init(struct snd_soc_pcm_runtime *rtd)
 {
@@ -1611,6 +1613,7 @@ static struct snd_soc_dai_link msm_ext_common_be_dai[] = {
 		.be_hw_params_fixup = msm_common_be_hw_params_fixup,
 		.ignore_suspend = 1,
 	},
+#ifdef CONFIG_SND_SOC_QCOM_TDM
 	{
 		.name = LPASS_BE_PRI_TDM_RX_0,
 		.stream_name = "Primary TDM0 Playback",
@@ -1756,6 +1759,7 @@ static struct snd_soc_dai_link msm_ext_common_be_dai[] = {
 		.ops = &msm_tdm_be_ops,
 		.ignore_suspend = 1,
 	},
+#endif
 };
 
 static struct snd_soc_dai_link msm_mi2s_be_dai_links[] = {
