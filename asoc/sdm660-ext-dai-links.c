@@ -156,7 +156,7 @@ static struct snd_soc_dai_link msm_ext_madera_fe_dai[] = {
 		.codec_name = "cs47l35-codec",
 		.codec_dai_name = "cs47l35-slim1",
 #endif
-		.be_id = MSM_BACKEND_DAI_SLIMBUS_4_TX,
+		.id = MSM_BACKEND_DAI_SLIMBUS_4_TX,
 		.be_hw_params_fixup = msm_ext_be_hw_params_fixup,
 		.ops = &msm_ext_slimbus_be_ops,
 		.no_host_mode = SND_SOC_DAI_LINK_NO_HOST,
@@ -494,7 +494,7 @@ static struct snd_soc_dai_link msm_ext_madera_be_dai[] = {
 #endif
 		.no_pcm = 1,
 		.dpcm_playback = 1,
-		.be_id = MSM_BACKEND_DAI_SLIMBUS_0_RX,
+		.id = MSM_BACKEND_DAI_SLIMBUS_0_RX,
 		.init = &msm_madera_init,
 		.be_hw_params_fixup = msm_ext_be_hw_params_fixup,
 		/* this dainlink has playback support */
@@ -516,7 +516,7 @@ static struct snd_soc_dai_link msm_ext_madera_be_dai[] = {
 #endif
 		.no_pcm = 1,
 		.dpcm_capture = 1,
-		.be_id = MSM_BACKEND_DAI_SLIMBUS_0_TX,
+		.id = MSM_BACKEND_DAI_SLIMBUS_0_TX,
 		.be_hw_params_fixup = msm_ext_be_hw_params_fixup,
 		.ignore_suspend = 1,
 		.ops = &msm_ext_slimbus_be_ops,
@@ -535,7 +535,7 @@ static struct snd_soc_dai_link msm_ext_madera_be_dai[] = {
 #endif
 		.no_pcm = 1,
 		.dpcm_playback = 1,
-		.be_id = MSM_BACKEND_DAI_SLIMBUS_1_RX,
+		.id = MSM_BACKEND_DAI_SLIMBUS_1_RX,
 		.be_hw_params_fixup = msm_ext_be_hw_params_fixup,
 		.ops = &msm_ext_slimbus_be_ops,
 		/* dai link has playback support */
@@ -555,7 +555,7 @@ static struct snd_soc_dai_link msm_ext_madera_be_dai[] = {
 		.codec_dai_name = "cs47l35-slim2",
 #endif
 		.dpcm_capture = 1,
-		.be_id = MSM_BACKEND_DAI_SLIMBUS_1_TX,
+		.id = MSM_BACKEND_DAI_SLIMBUS_1_TX,
 		.be_hw_params_fixup = msm_ext_be_hw_params_fixup,
 		.ops = &msm_ext_slimbus_be_ops,
 		.no_host_mode = SND_SOC_DAI_LINK_NO_HOST,
@@ -575,7 +575,7 @@ static struct snd_soc_dai_link msm_ext_madera_be_dai[] = {
 #endif
 		.no_pcm = 1,
 		.dpcm_playback = 1,
-		.be_id = MSM_BACKEND_DAI_SLIMBUS_2_RX,
+		.id = MSM_BACKEND_DAI_SLIMBUS_2_RX,
 		.be_hw_params_fixup = msm_ext_be_hw_params_fixup,
 		.ops = &msm_ext_slimbus_be_ops,
 		/* dai link has playback support */
@@ -590,14 +590,14 @@ static struct snd_soc_dai_link msm_ext_madera_be_dai[] = {
 		.platform_name = "msm-pcm-routing",
 #ifdef CONFIG_SND_SOC_CS47L90
 		.codec_name = "cs47l90-codec",
-		.codec_dai_name = "cs47l90-slim1",
+		.codec_dai_name = "cs47l90-slim3",
 #else
 		.codec_name = "cs47l35-codec",
 		.codec_dai_name = "cs47l35-slim1",
 #endif
 		.no_pcm = 1,
 		.dpcm_playback = 1,
-		.be_id = MSM_BACKEND_DAI_SLIMBUS_3_RX,
+		.id = MSM_BACKEND_DAI_SLIMBUS_3_RX,
 		.be_hw_params_fixup = msm_ext_be_hw_params_fixup,
 		.ops = &msm_ext_slimbus_be_ops,
 		/* dai link has playback support */
@@ -611,7 +611,7 @@ static struct snd_soc_dai_link msm_ext_madera_be_dai[] = {
 		.platform_name = "msm-pcm-routing",
 #ifdef CONFIG_SND_SOC_CS47L90
 		.codec_name = "cs47l90-codec",
-		.codec_dai_name = "cs47l90-slim1",
+		.codec_dai_name = "cs47l90-slim3",
 #else
 		.codec_name = "cs47l35-codec",
 		.codec_dai_name = "cs47l35-slim1",
@@ -619,7 +619,7 @@ static struct snd_soc_dai_link msm_ext_madera_be_dai[] = {
 		.no_pcm = 1,
 		.dpcm_capture = 1,
 		.dpcm_playback = 1,
-		.be_id = MSM_BACKEND_DAI_SLIMBUS_3_TX,
+		.id = MSM_BACKEND_DAI_SLIMBUS_3_TX,
 		.be_hw_params_fixup = msm_ext_be_hw_params_fixup,
 		.ops = &msm_ext_slimbus_be_ops,
 		.ignore_suspend = 1,
@@ -638,7 +638,7 @@ static struct snd_soc_dai_link msm_ext_madera_be_dai[] = {
 #endif
 		.no_pcm = 1,
 		.dpcm_playback = 1,
-		.be_id = MSM_BACKEND_DAI_SLIMBUS_4_RX,
+		.id = MSM_BACKEND_DAI_SLIMBUS_4_RX,
 		.be_hw_params_fixup = msm_ext_be_hw_params_fixup,
 		.ops = &msm_ext_slimbus_be_ops,
 		/* dai link has playback support */
@@ -659,7 +659,7 @@ static struct snd_soc_dai_link msm_ext_madera_be_dai[] = {
 #endif
 		.no_pcm = 1,
 		.dpcm_playback = 1,
-		.be_id = MSM_BACKEND_DAI_SLIMBUS_5_RX,
+		.id = MSM_BACKEND_DAI_SLIMBUS_5_RX,
 		.be_hw_params_fixup = msm_ext_be_hw_params_fixup,
 		.ops = &msm_ext_slimbus_be_ops,
 		/* dai link has playback support */
@@ -680,7 +680,7 @@ static struct snd_soc_dai_link msm_ext_madera_be_dai[] = {
 #endif
 		.no_pcm = 1,
 		.dpcm_playback = 1,
-		.be_id = MSM_BACKEND_DAI_SLIMBUS_6_RX,
+		.id = MSM_BACKEND_DAI_SLIMBUS_6_RX,
 		.be_hw_params_fixup = msm_ext_be_hw_params_fixup,
 		.ops = &msm_ext_slimbus_be_ops,
 		/* dai link has playback support */
