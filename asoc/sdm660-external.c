@@ -1995,11 +1995,10 @@ EXPORT_SYMBOL(msm_audrx_init);
 
 
 static struct snd_soc_dapm_route cs47l35_audio_paths[] = {
-	{"Slim1 Playback", NULL, "MCLK"},
-	{"Slim1 Capture", NULL, "MCLK"},
-	{"Slim2 Playback", NULL, "MCLK"},
-	{"Slim2 Capture", NULL, "MCLK"},
-
+	{"SLIMBUS_0_RX", NULL, "MCLK"},
+	{"SLIMBUS_5_RX", NULL, "MCLK"},
+	{"SLIMBUS_0_TX", NULL, "MCLK"},
+	{"SLIMBUS_5_TX", NULL, "MCLK"},
 	{"AIF1 Playback", NULL, "AMP Capture"},
 	{"AMP Playback", NULL, "OPCLK"},
 	{"AMP Capture", NULL, "OPCLK"},
