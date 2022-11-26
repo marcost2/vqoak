@@ -1750,11 +1750,11 @@ void msm_qti_pp_add_controls(struct snd_soc_component *component)
 			slimbus_7_lb_vol_mixer_controls,
 			ARRAY_SIZE(slimbus_7_lb_vol_mixer_controls));
 
-	snd_soc_add_platform_controls(platform,
+	snd_soc_add_component_controls(component,
 			slimbus_0_lb_vol_mixer_controls,
 			ARRAY_SIZE(slimbus_0_lb_vol_mixer_controls));
 
-	snd_soc_add_platform_controls(platform,
+	snd_soc_add_component_controls(component,
 			slimbus_8_lb_vol_mixer_controls,
 			ARRAY_SIZE(slimbus_8_lb_vol_mixer_controls));
 

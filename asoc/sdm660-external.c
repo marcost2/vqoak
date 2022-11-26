@@ -18,7 +18,7 @@
 #include "codecs/wcd934x/wcd934x.h"
 #include "codecs/wcd934x/wcd934x-mbhc.h"
 #include <soc/qcom/socinfo.h>
-#include "codecs/madera.h"
+#include <sound/soc/codecs/madera.h>
 #include <linux/mfd/madera/registers.h>
 
 #define SDM660_SPK_ON     1
@@ -724,10 +724,10 @@ int msm_ext_enable_codec_mclk(struct snd_soc_component *component, int enable,
 
 	pr_debug("%s: enable = %d\n", __func__, enable);
 
-	if (!strcmp(dev_name(codec->dev), "cs47l35-codec") ||
-		!strcmp(dev_name(codec->dev), "cs47l90-codec"))
+	if (!strcmp(dev_name(component->dev), "cs47l35-codec") ||
+		!strcmp(dev_name(component->dev), "cs47l90-codec"))
 		ret = 0;
-	else if (!strcmp(dev_name(codec->dev), "tasha_codec"))
+	else if (!strcmp(dev_name(component->dev), "tasha_codec"))
 		ret = tasha_cdc_mclk_enable(component, enable, dapm);
 	else if (!strcmp(dev_name(component->dev), "tavil_codec"))
 		ret = tavil_cdc_mclk_enable(component, enable);
@@ -982,7 +982,10 @@ int msm_snd_hw_params(struct snd_pcm_substream *substream,
 	struct snd_soc_dai_link *dai_link = rtd->dai_link;
 
 	int ret = 0;
-	//u32 rx_ch[SLIM_MAX_RX_PORTS]; //, tx_ch[SLIM_MAX_TX_PORTS];
+#ifndef CONFIG_SND_SOC_MADERA
+	u32 rx_ch[SLIM_MAX_RX_PORTS] , tx_ch[SLIM_MAX_TX_PORTS];
+	u32 rx_ch_cnt = 0;
+#endif
 	u32  tx_ch_cnt = 0;
 	u32 user_set_tx_ch = 0;
 	u32 rx_ch_count;
@@ -1059,7 +1062,7 @@ int msm_snd_hw_params(struct snd_pcm_substream *substream,
 		/* For <codec>_tx3 case */
 		else if (dai_link->id == MSM_BACKEND_DAI_SLIMBUS_3_TX)
 			user_set_tx_ch = slim_tx_cfg[3].channels;
-		else if (dai_link->be_id == MSM_BACKEND_DAI_SLIMBUS_4_TX)
+		else if (dai_link->id == MSM_BACKEND_DAI_SLIMBUS_4_TX)
 			user_set_tx_ch = msm_vi_feed_tx_ch;
 		else
 #ifndef CONFIG_SND_SOC_MADERA
@@ -1529,28 +1532,28 @@ static int msm_ext_mclk_event(struct snd_soc_dapm_widget *w,
 
 	switch (event) {
 	case SND_SOC_DAPM_PRE_PMU:
-		ret = msm_ext_enable_codec_mclk(codec, 1, true);
+		ret = msm_ext_enable_codec_mclk(component, 1, true);
 		if (ret != 0) {
 			pr_err("%s: Ext Clk Error %d\n", __func__, ret);
 			return ret;
 		}
-		ret = snd_soc_codec_set_pll(codec, MADERA_FLL1_REFCLK,
+		ret = snd_soc_component_set_pll(component, MADERA_FLL1_REFCLK,
 			MADERA_FLL_SRC_SLIMCLK,
 			1536000, CS47L35_SYSCLK_RATE);
 		if (ret != 0)
-			dev_err(codec->dev, "Failed to set REFCLK %d\n", ret);
+			dev_err(component->dev, "Failed to set REFCLK %d\n", ret);
 		break;
 	case SND_SOC_DAPM_POST_PMD:
-		ret =  msm_ext_enable_codec_mclk(codec, 0, true);
+		ret =  msm_ext_enable_codec_mclk(component, 0, true);
 		if (ret != 0) {
 			pr_err("%s: Ext Clk Error %d\n", __func__, ret);
 			return ret;
 		}
-		ret = snd_soc_codec_set_pll(codec, MADERA_FLL1_REFCLK,
+		ret = snd_soc_component_set_pll(component, MADERA_FLL1_REFCLK,
 			MADERA_FLL_SRC_MCLK2,
 			32768, CS47L35_SYSCLK_RATE);
 		if (ret != 0)
-			dev_err(codec->dev, "Failed to set REFCLK %d\n", ret);
+			dev_err(component->dev, "Failed to set REFCLK %d\n", ret);
 		break;
 	}
 	return 0;
@@ -2012,50 +2015,51 @@ static const struct snd_soc_dapm_widget msm_madera_dapm_widgets[] = {
 int msm_madera_init(struct snd_soc_pcm_runtime *rtd)
 {
 	int ret, i;
-	struct snd_soc_codec *codec = rtd->codec;
-	struct snd_soc_dapm_context *dapm = snd_soc_codec_get_dapm(codec);
+	struct snd_soc_dai *codec_dai = rtd->codec_dai;
+	struct snd_soc_component *component = rtd->codec_dai->component;
+	struct snd_soc_dapm_context *dapm = snd_soc_component_get_dapm(component);
 
-	ret = snd_soc_codec_set_pll(codec, MADERA_FLL1_REFCLK,
+	ret = snd_soc_component_set_pll(component, MADERA_FLL1_REFCLK,
 			MADERA_FLL_SRC_MCLK2,
 			32768, CS47L35_SYSCLK_RATE);
 	if (ret != 0) {
-		dev_err(codec->dev, "Failed to set FLL1REFCLK %d\n", ret);
+		dev_err(codec_dai->dev, "Failed to set FLL1REFCLK %d\n", ret);
 		return ret;
 	}
 
-	ret = snd_soc_codec_set_pll(codec, MADERA_FLL1_SYNCCLK,
+	ret = snd_soc_component_set_pll(component, MADERA_FLL1_SYNCCLK,
 			MADERA_FLL_SRC_MCLK2,
 			32768, CS47L35_SYSCLK_RATE);
 	if (ret != 0) {
-		dev_err(codec->dev, "Failed to set FLL1REFCLK %d\n", ret);
+		dev_err(codec_dai->dev, "Failed to set FLL1REFCLK %d\n", ret);
 		return ret;
 	}
 
-	ret = snd_soc_codec_set_sysclk(codec, MADERA_CLK_SYSCLK,
+	ret = snd_soc_component_set_sysclk(component, MADERA_CLK_SYSCLK_1,
 			MADERA_CLK_SRC_FLL1, CS47L35_SYSCLK_RATE,
 			SND_SOC_CLOCK_IN);
 	if (ret != 0) {
-		dev_err(codec->dev, "Failed to set SYSCLK %d\n", ret);
+		dev_err(codec_dai->dev, "Failed to set SYSCLK %d\n", ret);
 		return ret;
 	}
 
-	ret = snd_soc_codec_set_sysclk(codec, MADERA_CLK_DSPCLK,
+	ret = snd_soc_component_set_sysclk(component, MADERA_CLK_DSPCLK,
 			MADERA_CLK_SRC_FLL1, CS47L35_DSPCLK_RATE,
 			SND_SOC_CLOCK_IN);
 	if (ret != 0) {
-		dev_err(codec->dev, "Failed to set DSPCLK %d\n", ret);
+		dev_err(codec_dai->dev, "Failed to set DSPCLK %d\n", ret);
 		return ret;
 	}
 
-	ret = snd_soc_codec_set_sysclk(codec, MADERA_CLK_OPCLK,
+	ret = snd_soc_component_set_sysclk(component, MADERA_CLK_OPCLK,
 			0, CS35L35_MCLK_RATE,
 			SND_SOC_CLOCK_OUT);
 	if (ret != 0) {
-		dev_err(codec->dev, "Failed to set OPCLK %d\n", ret);
+		dev_err(codec_dai->dev, "Failed to set OPCLK %d\n", ret);
 		return ret;
 	}
 
-	ret = snd_soc_add_codec_controls(codec, msm_snd_controls,
+	ret = snd_soc_add_component_controls(component, msm_snd_controls,
 					 ARRAY_SIZE(msm_snd_controls));
 	if (ret < 0) {
 		pr_err("%s: add_codec_controls failed: %d\n",
@@ -2063,7 +2067,7 @@ int msm_madera_init(struct snd_soc_pcm_runtime *rtd)
 		return ret;
 	}
 
-	ret = snd_soc_add_codec_controls(codec, msm_common_snd_controls,
+	ret = snd_soc_add_component_controls(component, msm_common_snd_controls,
 					 msm_common_snd_controls_size());
 	if (ret < 0) {
 		pr_err("%s: add_common_snd_controls failed: %d\n",
@@ -2074,29 +2078,29 @@ int msm_madera_init(struct snd_soc_pcm_runtime *rtd)
 	ret = snd_soc_dapm_new_controls(dapm, msm_madera_dapm_widgets,
 			ARRAY_SIZE(msm_madera_dapm_widgets));
 	if (ret != 0) {
-		dev_err(codec->dev, "Failed to add dapm widgets %d\n", ret);
+		dev_err(codec_dai->dev, "Failed to add dapm widgets %d\n", ret);
 		return ret;
 	}
 
 	ret = snd_soc_dapm_add_routes(dapm, cs47l35_audio_paths,
 			ARRAY_SIZE(cs47l35_audio_paths));
 	if (ret != 0) {
-		dev_err(codec->dev, "Failed to add audio routes %d\n", ret);
+		dev_err(codec_dai->dev, "Failed to add audio routes %d\n", ret);
 		return ret;
 	}
 #ifdef CONFIG_SND_SOC_CS47L90
 	/* Toggle PDM_CLK GPIO */
 	for (i = 0; i < 5; i++) {
-		snd_soc_write(codec, MADERA_GPIO37_CTRL_1, 0xA001);
+		snd_soc_component_write(component, MADERA_GPIO37_CTRL_1, 0xA001);
 		usleep_range(1000, 1100);
-		snd_soc_write(codec, MADERA_GPIO37_CTRL_1, 0x2001);
+		snd_soc_component_write(component, MADERA_GPIO37_CTRL_1, 0x2001);
 		usleep_range(1000, 1100);
 	}
 #else
 	for (i = 0; i < 5; i++) {
-		snd_soc_write(codec, MADERA_GPIO6_CTRL_1, 0xA001);
+		snd_soc_component_write(component, MADERA_GPIO6_CTRL_1, 0xA001);
 		usleep_range(1000, 1100);
-		snd_soc_write(codec, MADERA_GPIO6_CTRL_1, 0x2001);
+		snd_soc_component_write(component, MADERA_GPIO6_CTRL_1, 0x2001);
 		usleep_range(1000, 1100);
 	}
 #endif
@@ -2109,7 +2113,7 @@ int msm_madera_init(struct snd_soc_pcm_runtime *rtd)
 #endif
 
 	/* Set Slimbus FLL input clock to 1.536MHz */
-	snd_soc_write(codec, MADERA_SLIMBUS_FRAMER_REF_GEAR, 0x6);
+	snd_soc_component_write(component, MADERA_SLIMBUS_FRAMER_REF_GEAR, 0x6);
 
 	snd_soc_dapm_ignore_suspend(dapm, "MICBIAS1");
 	snd_soc_dapm_ignore_suspend(dapm, "MICBIAS2");
@@ -2144,7 +2148,7 @@ int msm_madera_init(struct snd_soc_pcm_runtime *rtd)
 
 	snd_soc_dapm_sync(dapm);
 
-	ret = msm_adsp_power_up_config(codec);
+	ret = msm_adsp_power_up_config(component, rtd->card->snd_card);
 	if (ret)
 		pr_err("%s: Failed to set AFE config %d\n", __func__, ret);
 

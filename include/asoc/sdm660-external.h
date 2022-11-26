@@ -24,8 +24,10 @@ struct snd_soc_card *populate_snd_card_dailinks(struct device *dev,
 						int snd_card_val);
 int msm_ext_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
 			       struct snd_pcm_hw_params *params);
+#ifndef CONFIG_SND_SOC_MADERA
 int msm_snd_card_tavil_late_probe(struct snd_soc_card *card);
 int msm_snd_card_tasha_late_probe(struct snd_soc_card *card);
+#endif
 #if IS_ENABLED(CONFIG_SND_SOC_EXT_CODEC)
 int msm_ext_cdc_init(struct platform_device *, struct msm_asoc_mach_data *,
 		     struct snd_soc_card **, struct wcd_mbhc_config *);

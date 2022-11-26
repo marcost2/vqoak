@@ -13,7 +13,7 @@
 #include <asoc/sdm660-common.h>
 #include <asoc/sdm660-external.h>
 #include <asoc/core.h>
-#include "codecs/madera.h"
+#include <sound/soc/codecs/madera.h>
 #include "codecs/wcd9335.h"
 #include <linux/pm_qos.h>
 
@@ -28,6 +28,7 @@
 #define CS35L35_MCLK_RATE	12288000
 #define CS35L35_SCLK_RATE	1536000
 
+#ifndef CONFIG_SND_SOC_MADERA
 static struct snd_soc_card snd_soc_card_msm_card_tavil = {
 	.name = "sdm670-tavil-snd-card",
 	.late_probe = msm_snd_card_tavil_late_probe,
@@ -37,8 +38,11 @@ static struct snd_soc_card snd_soc_card_msm_card_tasha = {
 	.name = "sdm670-tasha-snd-card",
 	.late_probe = msm_snd_card_tasha_late_probe,
 };
+#endif
 
-static struct snd_soc_card snd_soc_card_msm_card_madera;
+struct snd_soc_card snd_soc_card_msm_card_madera = {
+	.name		= "sdm660-madera-snd-card",
+};
 
 static struct snd_soc_ops msm_ext_slimbus_be_ops = {
 	.hw_params = msm_snd_hw_params,
@@ -429,29 +433,29 @@ static int cs35l35_dai_init(struct snd_soc_pcm_runtime *rtd)
 {
 	int ret;
 	int codec_clock = CS35L35_MCLK_RATE;
-	struct snd_soc_codec *codec = rtd->codec;
-	struct snd_soc_dapm_context *dapm = snd_soc_codec_get_dapm(codec);
+	struct snd_soc_component *component = rtd->codec_dai->component;
+	struct snd_soc_dapm_context *dapm = snd_soc_component_get_dapm(component);
 	struct snd_soc_dai *aif1_dai = rtd->cpu_dai;
 	struct snd_soc_dai *cs35l35_dai = rtd->codec_dai;
 
 	ret = snd_soc_dai_set_sysclk(aif1_dai, MADERA_CLK_SYSCLK_3, 0, 0);
 	if (ret != 0) {
-		dev_err(codec->dev, "Failed to set SYSCLK %d\n", ret);
+		dev_err(cs35l35_dai->dev, "Failed to set SYSCLK %d\n", ret);
 		return ret;
 	}
 
 	ret = snd_soc_dai_set_sysclk(cs35l35_dai, 0, CS35L35_SCLK_RATE, 0);
 	if (ret != 0) {
-		dev_err(codec->dev, "Failed to set SCLK %d\n", ret);
+		dev_err(cs35l35_dai->dev, "Failed to set SCLK %d\n", ret);
 		return ret;
 	}
 
 #ifdef CONFIG_SND_SOC_CS35L36
 	codec_clock = CS35L35_SCLK_RATE;
 #endif
-	ret = snd_soc_codec_set_sysclk(codec, 0, 0, codec_clock, 0);
+	ret = snd_soc_component_set_sysclk(component, 0, 0, codec_clock, 0);
 	if (ret != 0) {
-		dev_err(codec->dev, "Failed to set MCLK %d\n", ret);
+		dev_err(cs35l35_dai->dev, "Failed to set MCLK %d\n", ret);
 		return ret;
 	}
 	snd_soc_dapm_ignore_suspend(dapm, "AMP Playback");
@@ -2402,10 +2406,12 @@ struct snd_soc_card *populate_snd_card_dailinks(struct device *dev,
 
 	if (snd_card_val == EXT_SND_CARD_MADERA) {
 		card = &snd_soc_card_msm_card_madera;
+#ifndef CONFIG_SND_SOC_MADERA
 	} else if (snd_card_val == EXT_SND_CARD_TASHA) {
 		card = &snd_soc_card_msm_card_tasha;
 	} else if (snd_card_val == EXT_SND_CARD_TAVIL) {
 		card = &snd_soc_card_msm_card_tavil;
+#endif
 	} else {
 		dev_err(dev, "%s: failing as no matching card name\n",
 			__func__);
