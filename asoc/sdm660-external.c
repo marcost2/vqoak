@@ -2122,10 +2122,14 @@ int msm_madera_init(struct snd_soc_pcm_runtime *rtd)
 	snd_soc_dapm_ignore_suspend(dapm, "MICBIAS1B");
 	snd_soc_dapm_ignore_suspend(dapm, "MICBIAS2A");
 	snd_soc_dapm_ignore_suspend(dapm, "MICBIAS2B");
-	snd_soc_dapm_ignore_suspend(dapm, "IN1AL");
-	snd_soc_dapm_ignore_suspend(dapm, "IN1AR");
-	snd_soc_dapm_ignore_suspend(dapm, "IN1BL");
-	snd_soc_dapm_ignore_suspend(dapm, "IN1BR");
+	snd_soc_dapm_ignore_suspend(dapm, "IN1ALN");
+	snd_soc_dapm_ignore_suspend(dapm, "IN1ALP");
+	snd_soc_dapm_ignore_suspend(dapm, "IN1ARN");
+	snd_soc_dapm_ignore_suspend(dapm, "IN1ARP");
+	snd_soc_dapm_ignore_suspend(dapm, "IN1BLN");
+	snd_soc_dapm_ignore_suspend(dapm, "IN1BLP");
+	snd_soc_dapm_ignore_suspend(dapm, "IN1BRN");
+	snd_soc_dapm_ignore_suspend(dapm, "IN1BRP");
 	snd_soc_dapm_ignore_suspend(dapm, "IN2L");
 	snd_soc_dapm_ignore_suspend(dapm, "IN2R");
 	snd_soc_dapm_ignore_suspend(dapm, "AIF1TX1");
@@ -2133,8 +2137,10 @@ int msm_madera_init(struct snd_soc_pcm_runtime *rtd)
 	snd_soc_dapm_ignore_suspend(dapm, "AIF1RX1");
 	snd_soc_dapm_ignore_suspend(dapm, "AIF1RX2");
 #ifdef CONFIG_SND_SOC_CS47L90
-	snd_soc_dapm_ignore_suspend(dapm, "IN2AL");
-	snd_soc_dapm_ignore_suspend(dapm, "IN2BL");
+	snd_soc_dapm_ignore_suspend(dapm, "IN2ALN");
+	snd_soc_dapm_ignore_suspend(dapm, "IN2ALP");
+	snd_soc_dapm_ignore_suspend(dapm, "IN2BLN");
+	snd_soc_dapm_ignore_suspend(dapm, "IN2BLP");
 	snd_soc_dapm_ignore_suspend(dapm, "HPOUT1L");
 	snd_soc_dapm_ignore_suspend(dapm, "HPOUT1R");
 	snd_soc_dapm_ignore_suspend(dapm, "HPOUT2L");
@@ -2142,9 +2148,9 @@ int msm_madera_init(struct snd_soc_pcm_runtime *rtd)
 #else
 	snd_soc_dapm_ignore_suspend(dapm, "HPOUTL");
 	snd_soc_dapm_ignore_suspend(dapm, "HPOUTR");
-#endif
 	snd_soc_dapm_ignore_suspend(dapm, "SPKOUTN");
 	snd_soc_dapm_ignore_suspend(dapm, "SPKOUTP");
+#endif
 
 	snd_soc_dapm_sync(dapm);
 
