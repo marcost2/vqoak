@@ -2145,6 +2145,8 @@ int msm_madera_init(struct snd_soc_pcm_runtime *rtd)
 	snd_soc_dapm_ignore_suspend(dapm, "HPOUT1R");
 	snd_soc_dapm_ignore_suspend(dapm, "HPOUT2L");
 	snd_soc_dapm_ignore_suspend(dapm, "HPOUT2R");
+	snd_soc_dapm_ignore_suspend(dapm, "SPKDAT1L");
+	snd_soc_dapm_ignore_suspend(dapm, "SPKDAT1R");
 #else
 	snd_soc_dapm_ignore_suspend(dapm, "HPOUTL");
 	snd_soc_dapm_ignore_suspend(dapm, "HPOUTR");
@@ -2202,13 +2204,11 @@ int msm_ext_cdc_init(struct platform_device *pdev,
 	int ret = 0;
 
 	pdev->id = 0;
-#ifndef CONFIG_SND_SOC_MADERA
 	wcd_mbhc_cfg_ptr = wcd_mbhc_cfg_ptr1;
 	wcd_mbhc_cfg_ptr->moisture_en = true;
 	wcd_mbhc_cfg_ptr->mbhc_micbias = MIC_BIAS_2;
 	wcd_mbhc_cfg_ptr->anc_micbias = MIC_BIAS_2;
 	wcd_mbhc_cfg_ptr->enable_anc_mic_detect = false;
-#endif
 
 	*card = populate_snd_card_dailinks(&pdev->dev, pdata->snd_card_val);
 	if (!(*card)) {
@@ -2245,7 +2245,6 @@ int msm_ext_cdc_init(struct platform_device *pdev,
 			ret);
 		ret = 0;
 	}
-#endif
 	pdata->msm_snd_intr_lpi.mpm_wakeup =
 		ioremap(TLMM_CENTER_MPM_WAKEUP_INT_EN_0, 4);
 	pdata->msm_snd_intr_lpi.intr1_cfg_apps =
@@ -2256,6 +2255,7 @@ int msm_ext_cdc_init(struct platform_device *pdev,
 		ioremap(TLMM_LPI_GPIO22_CFG, 4);
 	pdata->msm_snd_intr_lpi.lpi_gpio_inout =
 		ioremap(TLMM_LPI_GPIO22_INOUT, 4);
+#endif
 err:
 	return ret;
 }
