@@ -40,8 +40,13 @@ static struct snd_soc_card snd_soc_card_msm_card_tasha = {
 };
 #endif
 
+#define AMP_CODEC_NAME "cs35l36.0-0040"
+#define AMP_DAI_NAME   "cs35l36-pcm"
+
 struct snd_soc_card snd_soc_card_msm_card_madera = {
 	.name		= "sdm660-madera-snd-card",
+	.codec_conf	= cirrus_amp_codec_conf,
+	.num_configs	= ARRAY_SIZE(cirrus_amp_codec_conf),
 };
 
 static struct snd_soc_ops msm_ext_slimbus_be_ops = {
@@ -730,8 +735,8 @@ static struct snd_soc_dai_link msm_ext_madera_be_dai[] = {
 		.stream_name = "MADERA-AMP Playback",
 		.cpu_name = "cs47l90-codec",
 		.cpu_dai_name = "cs47l90-aif1",
-		.codec_name = "cs35l36.2-0040",
-		.codec_dai_name = "cs35l36-pcm",
+		.codec_name = AMP_CODEC_NAME,
+		.codec_dai_name = AMP_DAI_NAME,
 		.init = cs35l35_dai_init,
 		.dai_fmt = SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
 			SND_SOC_DAIFMT_CBS_CFS,
